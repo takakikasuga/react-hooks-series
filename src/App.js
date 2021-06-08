@@ -11,8 +11,8 @@ function App() {
       {/* <UseStateVer3_2></UseStateVer3_2> */}
       {/* <UseStateVer4></UseStateVer4> */}
       {/* <UseStateVer4_2></UseStateVer4_2> */}
-      {/* <UseStateVer5></UseStateVer5> */}
-      <UseStateVer6></UseStateVer6>
+      <UseStateVer5></UseStateVer5>
+      {/* <UseStateVer6></UseStateVer6> */}
     </>
   );
 }
@@ -219,11 +219,13 @@ const UseStateVer5 = () => {
   const handleClick = (val) => {
     console.log(val)
     setState({
-      ...state,
+      // ...state,
       [val]: state[val] + 1
     })
+    console.log(state.age)
   }
-
+  console.log(state)
+  // 分割代入
   const { age, siblingsNum } = state
 
   return (
