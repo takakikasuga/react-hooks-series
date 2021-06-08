@@ -219,10 +219,12 @@ const UseStateVer5 = () => {
   const handleClick = (val) => {
     console.log(val)
     setState({
-      // ...state,
+      // オブジェクトは差分検知ではなく全て入れ替わる。
+      ...state,
       [val]: state[val] + 1
     })
-    console.log(state.age)
+    // useStateの値がすぐに更新がされないことを証明
+    // console.log(state.age)
   }
   console.log(state)
   // 分割代入
@@ -234,8 +236,8 @@ const UseStateVer5 = () => {
       <p>I have {siblingsNum} siblings</p>
 
       <div>
-        <button onClick={handleClick.bind(null, 'age')}>Get older!</button>
-        <button onClick={handleClick.bind(null, 'siblingsNum')}>
+        <button onClick={() => { handleClick('age') }}>Get older!</button>
+        <button onClick={() => { handleClick('siblingsNum') }}>
           More siblings!
         </button>
       </div>
