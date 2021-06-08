@@ -242,7 +242,7 @@ const UseEffectVer6 = () => {
     }, 1000)
 
     return () => {
-      clearInterval(interval)
+      // clearInterval(interval)
       console.log('コンポーネントがアンマウントしました')
     }
   }, [])
