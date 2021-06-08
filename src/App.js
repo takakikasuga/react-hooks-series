@@ -1,256 +1,424 @@
 import logo from './logo.svg';
 import './App.css';
-import React, { useState, useCallback } from 'react';
+import React, { useState, useContext, createContext, useReducer, useMemo } from "react";
 
 function App() {
   return (
     <>
-      {/* <UseStateVer1></UseStateVer1> */}
-      {/* <UseStateVer2></UseStateVer2> */}
-      {/* <UseStateVer3></UseStateVer3> */}
-      {/* <UseStateVer3_2></UseStateVer3_2> */}
-      {/* <UseStateVer4></UseStateVer4> */}
-      {/* <UseStateVer4_2></UseStateVer4_2> */}
-      <UseStateVer5></UseStateVer5>
-      {/* <UseStateVer6></UseStateVer6> */}
+      <UseContext></UseContext>
+      {/* <UseContextVer2></UseContextVer2> */}
+      {/* <UseContextVer3></UseContextVer3> */}
+      {/* <UseContextVer4></UseContextVer4> */}
+      {/* <UseContextVer5></UseContextVer5> */}
+      {/* <UseContextVer6></UseContextVer6> */}
+      {/* <UseContextVer6></UseContextVer6> */}
     </>
   );
 }
 
-const UseStateVer1 = () => {
-  console.log('UseStateVer1コンポーネントが発火しました！')
-  // count という state と setCount という count を更新する関数を定義。
-  // 今回、useState に 10 を渡しているため count の初期値は 10 になる。
-  const [count, setCount] = useState(10);
+// // 01 - useContextで、Appから見てひ孫にあたるGreatGrandChildコンポーネントからMyContextの値を取得する
+// // Context オブジェクト
+const MyContext = createContext();
+console.log(MyContext)
 
-  const decrement = () => {
-    // setCount に count - 1 を渡しているので、
-    // decrement が実行される度に、count が 1 減る。
-    setCount(count - 1);
+const UseContext = () => {
+  const [count, setCount] = useState(0);
+  const value = {
+    name: "soarflat",
+    handleClick: () => setCount((count) => count + 1)
   };
-
-  const increment = () => {
-    // setCount に count + 1 を渡しているので、
-    // increment が実行される度に、count が 1 増える。
-    setCount(count + 1);
-  };
-
-  return (
-    <>
-      <p>Count: {count}</p>
-      <button onClick={decrement}>-</button>
-      <button onClick={increment}>+</button>
-    </>
-  );
-}
-
-
-const UseStateVer2 = () => {
-  // count という state と setCount という count を更新する関数を定義。
-  // 今回、useState に 10 を渡しているため count の初期値は 10 になる。
-  const [count, setCount] = useState(10);
-
-  const decrement = () => {
-    // 引数に渡した関数（(currentCount) => currentCount - 1）の
-    // 引数（currentCount）には現在の count が渡される。
-    // 関数の戻り値が新しい count になるため、
-    // decrement が実行される度に count が 1 減る。
-    setCount(currentCount => currentCount - 1);
-  };
-
-  const increment = () => {
-    // 引数に渡した関数（(currentCount) => currentCount + 1）の
-    // 引数（currentCount）には現在の count が渡される。
-    // 関数の戻り値が新しい count になるため、
-    // increment が実行される度に count が 1 増える。
-    setCount(currentCount => currentCount + 1);
-  };
-
-  return (
-    <>
-      <p>Count: {count}</p>
-      <button onClick={decrement}>-</button>
-      <button onClick={increment}>+</button>
-    </>
-  );
-}
-
-const UseStateVer3 = () => {
-  const [vote, setVote] = useState({ kinoko: 0, takenoko: 0 });
-
-  const voteKinoko = () => {
-    // 現在の vote に、kinoko プロパティ（現在の vote.kinoko + 1）を
-    // マージしたオブジェクトを setVote に渡す。
-    // 例えば、vote が以下の状態であれば
-    // { kinoko: 0, takenoko: 0 }
-    // 以下のように更新される
-    // { kinoko: 1, takenoko: 0 }
-    setVote({ ...vote, kinoko: vote.kinoko + 1 });
-  };
-
-  const voteTakenoko = () => {
-    // 現在の vote に、takenoko プロパティ（現在の vote.takenoko + 1）を
-    // マージしたを setVote に渡す。
-    // 例えば、vote が以下の状態であれば
-    // { kinoko: 0, takenoko: 0 }
-    // 以下のように更新される
-    // { kinoko: 0, takenoko: 1 }
-    setVote({ ...vote, takenoko: vote.takenoko + 1 });
-  };
-
-  return (
-    <>
-      <p>きのこ: {vote.kinoko}</p>
-      <p>たけのこ: {vote.takenoko}</p>
-      <button onClick={voteKinoko}>きのこ</button>
-      <button onClick={voteTakenoko}>たけのこ</button>
-    </>
-  );
-}
-
-const UseStateVer3_2 = () => {
-  const [vote, setVote] = useState({ kinoko: 0, takenoko: 0 });
-
-  const voteKinoko = () => {
-    // 以下のように state を更新してしまうと、React は state が
-    // 更新されていないと判定するのでコンポーネントが再レンダーされない。
-    vote.kinoko = vote.kinoko + 1;
-    setVote(vote);
-  };
-
-  const voteTakenoko = () => {
-    // 以下のように state を更新してしまうと、React は state が
-    // 更新されていないと判定するのでコンポーネントが再レンダーされない。
-    vote.takenoko = vote.takenoko + 1;
-    setVote(vote);
-  };
-
-  vote.kinoko = vote.kinoko + 1;
-  const newVote = { ...vote, kinoko: vote.kinoko + 1 };
-
-  const foo = { a: 1 };
-  const bar = { a: 1 };
-  console.log(Object.is(foo, foo));//true
-  console.log(Object.is(foo, bar));//false
-  console.log(Object.is(vote, vote));//true
-  console.log(Object.is(vote, newVote));//false
-
-  return (
-    <>
-      <p>きのこ: {vote.kinoko}</p>
-      <p>たけのこ: {vote.takenoko}</p>
-      <button onClick={voteKinoko}>きのこ</button>
-      <button onClick={voteTakenoko}>たけのこ</button>
-    </>
-  );
-}
-
-const UseStateVer4 = () => {
-  const [items, setItems] = useState([{ name: "きのこ" }]);
-
-  const addItem = () => {
-    const newItem = {
-      name: Math.random() > 0.5 ? "きのこ" : "たけのこ"
-    };
-    // 現在の items に newItem を追加した配列を setItems に渡す。
-    setItems([...items, newItem]);
-  };
-
-  // 引数 index は削除したい要素のインデックス
-  const deleteItem = (index) => {
-    // 現在の items から、引数 index と同じインデックスの要素を
-    // 削除した配列を setItems に渡す。
-    setItems(items.filter((_, i) => i !== index));
-  };
-
-  return (
-    <>
-      <button onClick={addItem}>「きのこ」か「たけのこ」を追加</button>
-      <ul>
-        {items.map((item, index) => (
-          <li key={index}>
-            {item.name}
-            <button onClick={() => deleteItem(index)}>削除</button>
-          </li>
-        ))}
-      </ul>
-    </>
-  );
-}
-
-const UseStateVer4_2 = () => {
-  const [items, setItems] = useState([{ name: "きのこ" }]);
-
-  const addItem = () => {
-    const newItem = {
-      name: Math.random() > 0.5 ? "きのこ" : "たけのこ"
-    };
-    // 以下のように state を更新してしまうと、React は state が
-    // 更新されていないと判定するのでコンポーネントが再レンダーされない。
-    items.push(newItem);
-    setItems(items);
-  };
-
-  // 引数 index は削除したい要素のインデックス
-  const deleteItem = (index) => {
-    // 以下のように state を更新してしまうと、React は state が
-    // 更新されていないと判定するのでコンポーネントが再レンダーされない。
-    items.splice(index, 1);
-    setItems(items);
-  };
-
-  return (
-    <>
-      <button onClick={addItem}>「きのこ」か「たけのこ」を追加</button>
-      <ul>
-        {items.map((item, index) => (
-          <li key={index}>
-            {item.name}
-            <button onClick={() => deleteItem(index)}>削除</button>
-          </li>
-        ))}
-      </ul>
-    </>
-  );
-}
-
-const UseStateVer5 = () => {
-  const [state, setState] = useState({ age: 19, siblingsNum: 4 })
-  const handleClick = (val) => {
-    console.log(val)
-    setState({
-      // オブジェクトは差分検知ではなく全て入れ替わる。
-      ...state,
-      [val]: state[val] + 1
-    })
-    // useStateの値がすぐに更新がされないことを証明
-    // console.log(state.age)
-  }
-  console.log(state)
-  // 分割代入
-  const { age, siblingsNum } = state
 
   return (
     <div>
-      <p>Today I am {age} Years of Age</p>
-      <p>I have {siblingsNum} siblings</p>
-
-      <div>
-        <button onClick={() => { handleClick('age') }}>Get older!</button>
-        <button onClick={() => { handleClick('siblingsNum') }}>
-          More siblings!
-        </button>
-      </div>
+      <p>count: {count}</p>
+      {/* Provider。value プロパティの値を共有する。 */}
+      <MyContext.Provider value={value}>
+        <Child />
+      </MyContext.Provider>
     </div>
-  )
+  );
 }
 
-const UseStateVer6 = () => {
-  const [token] = useState(() => {
-    let token = window.localStorage.getItem("my-token");
-    return token || "default#-token#"
-  })
-
-  return <div>Token is {token}</div>
+function Child() {
+  return <GrandChild />;
 }
+
+function GrandChild() {
+  return <GreatGrandChild />;
+}
+
+function GreatGrandChild() {
+  // Provider（<MyContext.Provider value={value}>）から
+  // Context オブジェクトの値（value プロパティの値）を取得する。
+  // そのため、context は
+  // {
+  //   name: 'soarflat',
+  //   handleClick: () => setCount(count => count + 1)
+  // }
+  // になる。
+  const context = useContext(MyContext);
+  console.log(context)
+
+  return (
+    <>
+      <p>{context.name}</p>
+      <button onClick={context.handleClick}>increment</button>
+    </>
+  );
+}
+
+// // 02 - useContextを利用しない場合、AppからGreatGrandChildComponentに値を渡すためにはProp drillingを行う必要がある
+// const UseContextVer2 = () => {
+//   const [count, setCount] = useState(0);
+//   const value = {
+//     name: "soarflat",
+//     handleClick: () => setCount((count) => count + 1)
+//   };
+
+//   return (
+//     <div>
+//       <p>count: {count}</p>
+//       <Child2 value={value} />
+//     </div>
+//   );
+// }
+
+// // Child コンポーネント自体は value を利用しないが、GrandChild コンポーネントに
+// // Props として渡すために、value を受け取る必要がある。
+// function Child2({ value }) {
+//   return <GrandChild2 value={value} />;
+// }
+
+// // GrandChild コンポーネント自体は value を利用しないが、GreatGrandChild コンポーネントに
+// // Props として渡すために、value を受け取る必要がある。
+// function GrandChild2({ value }) {
+//   return <GreatGrandChild2 value={value} />;
+// }
+
+// function GreatGrandChild2({ value }) {
+//   return (
+//     <>
+//       <p>{value.name}</p>
+//       <button onClick={value.handleClick}>increment</button>
+//     </>
+//   );
+// }
+
+// // 03 - 複数のコンポーネントで共通利用するデータをContextで扱い、それをuseContextで取得する
+// const LangContext = createContext();
+
+// const UseContextVer3 = () => {
+//   const [lang, setLang] = useState("JP");
+
+//   return (
+//     <>
+//       <button onClick={() => setLang("JP")}>日本語</button>
+//       <button onClick={() => setLang("EN")}>English</button>
+//       <LangContext.Provider value={lang}>
+//         <Header />
+//         <Body />
+//       </LangContext.Provider>
+//     </>
+//   );
+// }
+
+// function Header() {
+//   const lang = useContext(LangContext);
+//   const text = {
+//     JP: "速習 React Hooks",
+//     EN: "React Hooks Quick Start Guide"
+//   };
+
+//   return (
+//     <header>
+//       <h1>{text[lang]}</h1>
+//     </header>
+//   );
+// }
+
+// function Body() {
+//   const lang = useContext(LangContext);
+//   const text = {
+//     JP: "useContext の利用例",
+//     EN: "useContext Example"
+//   };
+
+//   return <p>{text[lang]}</p>;
+// }
+
+
+// // 04 - Contextの更新により不要な再レンダーが発生している例
+// const CountContext = createContext();
+
+// function countReducer(state, action) {
+//   switch (action.type) {
+//     case 'INCREMENT': {
+//       return { count: state.count + 1 };
+//     }
+//     case 'DECREMENET': {
+//       return { count: state.count - 1 };
+//     }
+//     default: {
+//       return state;
+//     }
+//   }
+// }
+
+// function CountProvider({ children }) {
+//   console.log(children)
+//   const [state, dispatch] = useReducer(countReducer, { count: 0 });
+//   const value = {
+//     state,
+//     dispatch
+//   };
+
+//   return (
+//     // value（state か dispatch のどちらか）が更新したら、
+//     // CountContext.Provider 内のすべての Consumer が再レンダーされる。
+//     <CountContext.Provider value={value}>{children}</CountContext.Provider>
+//   );
+// }
+
+
+// function Count() {
+//   console.log('render Count');
+//   // CountContext からは state のみを取得しているが、
+//   // dispatch が更新されても再レンダーされる
+//   const { state } = useContext(CountContext);
+
+//   return <h1>{state.count}</h1>;
+// }
+
+// function Counter() {
+//   console.log('render Counter');
+//   // CountContext からは dispatch のみを取得しているが、
+//   // state が更新されても再レンダーされる
+//   const { dispatch } = useContext(CountContext);
+
+//   return (
+//     <>
+//       <button onClick={() => dispatch({ type: 'DECREMENET' })}>-</button>
+//       <button onClick={() => dispatch({ type: 'INCREMENT' })}>+</button>
+//     </>
+//   );
+// }
+
+// const UseContextVer4 = () => {
+//   return (
+//     <CountProvider>
+//       <Count />
+//       <Counter />
+//     </CountProvider>
+//   );
+// }
+
+// // 05 - Contextオブジェクトを分割して、Contextの更新による不要な再レンダーを防ぐ
+// const CountStateContext = createContext();
+// const CountDispatchContext = createContext();
+
+// function countReducer(state, action) {
+//   switch (action.type) {
+//     case 'INCREMENT': {
+//       return { count: state.count + 1 };
+//     }
+//     case 'DECREMENT': {
+//       return { count: state.count - 1 };
+//     }
+//     default: {
+//       return state;
+//     }
+//   }
+// }
+
+// function CountProvider({ children }) {
+//   const [state, dispatch] = useReducer(countReducer, { count: 0 });
+
+//   // CountStateContext.Provider の value が更新したら、
+//   // CountStateContext の値を取得している全ての Consumer が再レンダーされる。
+//   // CountDispatchContext.Provider の value が更新したら、
+//   // CountDispatchContext の値を取得している全ての Consumer が再レンダーされる。
+//   return (
+//     <CountStateContext.Provider value={state}>
+//       <CountDispatchContext.Provider value={dispatch}>
+//         {children}
+//       </CountDispatchContext.Provider>
+//     </CountStateContext.Provider>
+//   );
+// }
+
+// function Count() {
+//   console.log('render Count');
+//   // state と dispatch を保持する Context オブジェクトが異なるので、
+//   // dispatch が更新されてもこのコンポーネントは再レンダーされない。
+//   const state = useContext(CountStateContext);
+
+//   return <h1>{state.count}</h1>;
+// }
+
+// function Counter() {
+//   console.log('render Counter');
+//   // state と dispatch を保持する Context オブジェクトが異なるので、
+//   // state が更新されてもこのコンポーネントは再レンダーされない。
+//   const dispatch = useContext(CountDispatchContext);
+
+//   return (
+//     <>
+//       <button onClick={() => dispatch({ type: 'DECREMENT' })}>-</button>
+//       <button onClick={() => dispatch({ type: 'INCREMENT' })}>+</button>
+//     </>
+//   );
+// }
+
+// const UseContextVer5 = () => {
+//   return (
+//     <CountProvider>
+//       <Count />
+//       <Counter />
+//     </CountProvider>
+//   );
+// }
+
+// // 06 - React.memoを利用して、Contextの更新による不要な再レンダーを防ぐ
+// const CountContext = createContext();
+
+// function countReducer(state, action) {
+//   switch (action.type) {
+//     case 'INCREMENT': {
+//       return { count: state.count + 1 };
+//     }
+//     case 'DECREMENT': {
+//       return { count: state.count - 1 };
+//     }
+//     default: {
+//       return state;
+//     }
+//   }
+// }
+
+// function CountProvider({ children }) {
+//   const [state, dispatch] = useReducer(countReducer, { count: 0 });
+//   const value = {
+//     state,
+//     dispatch
+//   };
+
+//   return (
+//     // value（state か dispatch のどちらか）が更新したら、
+//     // CountContext.Provider 内のすべての Consumer が再レンダーされる。
+//     <CountContext.Provider value={value}>{children}</CountContext.Provider>
+//   );
+// }
+
+// function Count() {
+//   console.log('render Count');
+//   // CountContext からは state のみを取得しているが、
+//   // dispatch が更新されても再レンダーされる
+//   const { state } = useContext(CountContext);
+
+//   return <h1>{state.count}</h1>;
+// }
+
+// function Counter() {
+//   console.log('render Counter');
+//   // CountContext からは dispatch のみを取得しているが、
+//   // state が更新されても再レンダーされる
+//   const { dispatch } = useContext(CountContext);
+
+//   // CountContext.Provider の value の更新による Counter コンポーネントの
+//   // 再レンダーは避けられない。そのため、このコンポーネントは CountContext から値を
+//   // 取得するだけにして、メモ化したコンポーネントに取得した dispatch を渡すようにする。
+//   return <DispatchButton dispatch={dispatch} />;
+// }
+
+// // dispatch を Props として受け取るコンポーネントをメモ化し、不要な再レンダーを防ぐ
+// const DispatchButton = React.memo(({ dispatch }) => {
+//   console.log('render DispatchButton');
+
+//   return (
+//     <>
+//       <button onClick={() => dispatch({ type: 'DECREMENT' })}>-</button>
+//       <button onClick={() => dispatch({ type: 'INCREMENT' })}>+</button>
+//     </>
+//   );
+// });
+
+// const UseContextVer6 = () => {
+//   return (
+//     <CountProvider>
+//       <Count />
+//       <Counter />
+//     </CountProvider>
+//   );
+// }
+
+// 07 - useMemoを利用して、Contextの更新による不要な再レンダーを防ぐ例
+// const CountContext = createContext();
+
+// function countReducer(state, action) {
+//   switch (action.type) {
+//     case 'INCREMENT': {
+//       return { count: state.count + 1 };
+//     }
+//     case 'DECREMENT': {
+//       return { count: state.count - 1 };
+//     }
+//     default: {
+//       return state;
+//     }
+//   }
+// }
+
+// function CountProvider({ children }) {
+//   const [state, dispatch] = useReducer(countReducer, { count: 0 });
+//   const value = {
+//     state,
+//     dispatch
+//   };
+
+//   return (
+//     // value（state か dispatch のどちらか）が更新したら、
+//     // CountContext.Provider 内のすべての Consumer が再レンダーされる。
+//     <CountContext.Provider value={value}>{children}</CountContext.Provider>
+//   );
+// }
+
+// function Count() {
+//   console.log('render Count');
+//   // CountContext からは state のみを取得しているが、
+//   // dispatch が更新されても再レンダーされる
+//   const { state } = useContext(CountContext);
+
+//   return <h1>{state.count}</h1>;
+// }
+
+// function Counter() {
+//   console.log('render Counter');
+//   // CountContext からは dispatch のみを取得しているが、
+//   // state が更新されても再レンダーされる
+//   const { dispatch } = useContext(CountContext);
+
+//   // CountContext.Provider の value の更新による Counter コンポーネントの
+//   // 再レンダーは避けられない。そのため dispatch を利用するレンダリング結果（計算結果）を
+//   // メモ化し、不要な再レンダーを防ぐ。
+//   return useMemo(() => {
+//     console.log('rerender Counter');
+//     return (
+//       <>
+//         <button onClick={() => dispatch({ type: 'DECREMENT' })}>-</button>
+//         <button onClick={() => dispatch({ type: 'INCREMENT' })}>+</button>
+//       </>
+//     );
+//   }, [dispatch]);
+// }
+
+// const UseContextVer6 = () => {
+//   return (
+//     <CountProvider>
+//       <Count />
+//       <Counter />
+//     </CountProvider>
+//   );
+// }
+
+
 export default App;
