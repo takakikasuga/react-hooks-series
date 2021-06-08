@@ -1,195 +1,114 @@
 import logo from './logo.svg';
 import './App.css';
-import React, { useState, useReducer, useCallback } from 'react';
+import React, { useEffect, useState, useLayoutEffect, useRef } from 'react';
+import axios from 'axios';
 
 function App() {
   return (
     <>
-      {/* <UseReducer></UseReducer> */}
-      {/* <UseReducerVer2></UseReducerVer2> */}
-      {/* <UseReducerVer3></UseReducerVer3> */}
-      {/* <UseReducerVer4></UseReducerVer4> */}
-      <UseReducerVer5></UseReducerVer5>
+      {/* <UseRef></UseRef> */}
+      {/* <UseRefVer2></UseRefVer2> */}
+      {/* <UseRefVer3></UseRefVer3> */}
+      <UseRefVer4></UseRefVer4>
     </>
   );
 }
 
-// 01 - useReducerの利用例
-// 現在の state と action を受け取り、action に応じて更新した state を返す関数
-function reducer(state, action) {
-  switch (action.type) {
-    case 'INCEREMENT':
-      return { count: state.count + 1 };
-    case 'DECREMENT':
-      return { count: state.count - 1 };
-    case 'RESET':
-      return { count: 0 };
-    default:
-      return state;
-  }
-}
+const UseRef = () => {
+  const [count, setCount] = useState(10);
+  // useRef に 0 を渡しているので、prevCountRef.current の初期値は 0
+  const prevCountRef = useRef(0);
 
-const UseReducer = () => {
-  // useReducer の第２引数に { count: 0 } を渡しているので、
-  // state の初期値は { count: 0 }
-  const [state, dispatch] = useReducer(reducer, { count: 0 });
+  useEffect(() => {
+    // ref オブジェクトが更新されてもコンポーネントは再レンダーされない。
+    console.log(prevCountRef)
+    prevCountRef.current = count;
+    console.log(prevCountRef)
+  });
 
   return (
     <>
-      <p>count: {state.count}</p>
-
-      {/* { type: 'DECREMENT' } という action を送信する */}
-      <button onClick={() => dispatch({ type: 'DECREMENT' })}>-</button>
-
-      {/* { type: 'INCEREMENT' } という action を送信する */}
-      <button onClick={() => dispatch({ type: 'INCEREMENT' })}>+</button>
-
-      {/* { type: 'RESET' } という action を送信する */}
-      <button onClick={() => dispatch({ type: 'RESET' })}>reset</button>
+      <p>
+        現在のcount: {count}, 前回のcount: {prevCountRef.current}
+      </p>
+      <p>前回のcountより{prevCountRef.current > count ? '小さい' : '大きい'}</p>
+      <button onClick={() => setCount(Math.floor(Math.random() * 11))}>
+        update
+      </button>
     </>
   );
-}
+};
+const UseRefVer2 = () => {
+  const [count, setCount] = useState(0);
+  // 初回レンダーかどうかのフラグ
+  const isInitialRender = useRef(true);
 
-// 02 - useStateを利用した場合、stateの更新方法の数だけ、コンポーネントに state 更新関数を渡す必要がある
-const Counter = ({ decrement, increment, reset }) => {
+  // isInitialRender.current を更新する副作用
+  useEffect(() => {
+    if (isInitialRender.current) {
+      // ref オブジェクトが更新されてもコンポーネントは再レンダーされない。
+      console.log(isInitialRender)
+      isInitialRender.current = false;
+      console.log(isInitialRender)
+    }
+  });
+  console.log('レンダリングを走らせます。')
   return (
     <>
-      <button onClick={decrement}>-</button>
-      <button onClick={increment}>+</button>
-      <button onClick={reset}>reset</button>
+      {/* count が更新されるまで、「初回レンダー」が表示される。 */}
+      <p>{isInitialRender.current ? "初回レンダー" : "再レンダー"}</p>
+      <p>count: {count}</p>
+      <button onClick={() => setCount(count + 1)}>+</button>
     </>
   );
 };
 
-const UseReducerVer2 = () => {
+const UseRefVer3 = () => {
   const [count, setCount] = useState(0);
+  // 初回レンダーかどうかのフラグ
+  const [isInitialRender, setIsInitialRender] = useState(true);
 
-  const decrement = () => {
-    setCount(currentCount => currentCount - 1);
-  };
-
-  const increment = () => {
-    setCount(currentCount => currentCount + 1);
-  };
-
-  const reset = () => {
-    setCount(() => 0);
-  };
+  useEffect(() => {
+    if (isInitialRender) {
+      // isInitialRender は state なので、
+      // isInitialRender を更新したら再レンダーされる。
+      console.log(isInitialRender)
+      setIsInitialRender(false);
+    }
+  }, [isInitialRender]);
+  console.log('レンダリングを走らせます。')
+  console.log(isInitialRender)
 
   return (
     <>
-      <p>Count: {count}</p>
-      <Counter decrement={decrement} increment={increment} reset={reset} />
+      {/* レンダー後に副作用が実行され、isInitialRender が false に
+      更新されるので、「初回レンダー」は表示されない。 */}
+      <p>{isInitialRender ? "初回レンダー" : "再レンダー"}</p>
+      <p>count: {count}</p>
+      <button onClick={() => setCount(count + 1)}>+</button>
     </>
   );
 }
 
-// 03 - useReducerを利用した場合、stateを更新する窓口はdispatchに集約するため、コンポーネントにはdispatchさえ渡せば良い
-function reducer2(state, action) {
-  switch (action.type) {
-    case 'INCEREMENT':
-      return { count: state.count + 1 };
-    case 'DECREMENT':
-      return { count: state.count - 1 };
-    case 'RESET':
-      return { count: 0 };
-    default:
-      return state;
-  }
-}
+export const UseRefVer4 = () => {
+  const inputEl = useRef(null);
+  const onClick = () => {
+    console.log(inputEl.current)
+    console.log(inputEl)
+    if (!inputEl.current) return;
 
-const Counter2 = ({ dispatch }) => {
+    inputEl.current.focus();
+  };
+
   return (
     <>
-      <button onClick={() => dispatch({ type: 'DECREMENT' })}>-</button>
-      <button onClick={() => dispatch({ type: 'INCEREMENT' })}>+</button>
-      <button onClick={() => dispatch({ type: 'RESET' })}>reset</button>
+      {/* ref 属性に inputEl を指定することで、inputEl.current で DOM にアクセスできる */}
+      <input ref={inputEl} type="text" />
+      <button onClick={onClick}>input要素をフォーカスする</button>
     </>
   );
 };
 
-const UseReducerVer3 = () => {
-  const [state, dispatch] = useReducer(reducer2, { count: 0 });
-
-  return (
-    <>
-      <p>Count: {state.count}</p>
-      <Counter2 dispatch={dispatch} />
-    </>
-  );
-}
-
-// 04 - dispatchは同一性が保たれるので、useCallbackでラップをせずにメモ化したコンポーネントに渡せる
-function reducer3(state, action) {
-  switch (action.type) {
-    case 'INCEREMENT':
-      return { count: state.count + 1 };
-    case 'DECREMENT':
-      return { count: state.count - 1 };
-    case 'RESET':
-      return { count: 0 };
-    default:
-      return state;
-  }
-}
-
-const Counter3 = React.memo(({ dispatch }) => {
-  console.log('render Counter');
-  return (
-    <>
-      <button onClick={() => dispatch({ type: 'DECREMENT' })}>-</button>
-      <button onClick={() => dispatch({ type: 'INCEREMENT' })}>+</button>
-      <button onClick={() => dispatch({ type: 'RESET' })}>reset</button>
-    </>
-  );
-});
-
-const UseReducerVer4 = () => {
-  const [state, dispatch] = useReducer(reducer3, { count: 0 });
-
-  return (
-    <>
-      <p>Count: {state.count}</p>
-      <Counter3 dispatch={dispatch} />
-    </>
-  );
-}
-
-// 05 - Counterコンポーネントの再レンダーを防ぐためには、Propsとして渡す関数を全てuseCallbackでラップする必要がある
-const Counter4 = React.memo(({ decrement, increment, reset }) => {
-  console.log('render Counter');
-  return (
-    <>
-      <button onClick={decrement}>-</button>
-      <button onClick={increment}>+</button>
-      <button onClick={reset}>reset</button>
-    </>
-  );
-});
-
-const UseReducerVer5 = () => {
-  const [count, setCount] = useState(0);
-
-  const decrement = useCallback(() => {
-    setCount(currentCount => currentCount - 1);
-  }, [setCount]);
-
-  const increment = useCallback(() => {
-    setCount(currentCount => currentCount + 1);
-  }, [setCount]);
-
-  const reset = useCallback(() => {
-    setCount(() => 0);
-  }, [setCount]);
-
-  return (
-    <>
-      <p>Count: {count}</p>
-      <Counter4 decrement={decrement} increment={increment} reset={reset} />
-    </>
-  );
-}
 
 
 export default App;
-
