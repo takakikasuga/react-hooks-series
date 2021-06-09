@@ -5,7 +5,34 @@ import React, { useState, useReducer, useCallback } from 'react';
 function App() {
   return (
     <>
-      <UseReducer></UseReducer>
+      <Counter></Counter>
+      {/* <UseReducer></UseReducer> */}
+    </>
+  );
+}
+
+// useStateによる管理手法
+const Counter = () => {
+  const [count, setCount] = useState(0);
+
+  const decrement = () => {
+    setCount(currentCount => currentCount - 1);
+  };
+
+  const increment = () => {
+    setCount(currentCount => currentCount + 1);
+  };
+
+  const reset = () => {
+    setCount(() => 0);
+  };
+
+  return (
+    <>
+      <p>Count: {count}</p>
+      <button onClick={decrement}>-</button>
+      <button onClick={increment}>+</button>
+      <button onClick={reset}>reset</button>
     </>
   );
 }
@@ -46,6 +73,8 @@ const UseReducer = () => {
     </>
   );
 }
+
+
 
 
 export default App;
