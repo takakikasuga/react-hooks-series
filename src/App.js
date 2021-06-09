@@ -5,13 +5,13 @@ import React, { useState, useCallback } from 'react';
 function App() {
   return (
     <>
-      <UseStateVer1></UseStateVer1>
+      <UseState></UseState>
 
     </>
   );
 }
 
-const UseStateVer1 = () => {
+const UseState = () => {
   // count という state と setCount という count を更新する関数を定義。
   // 今回、useState に 10 を渡しているため count の初期値は 10 になる。
   const [count, setCount] = useState(10);
@@ -22,6 +22,11 @@ const UseStateVer1 = () => {
     setCount(count - 1);
     // 更新直後の値は変化しない
     console.log(count)
+    if (count === 10) {
+      console.log('countの値は10です')
+    } else {
+      console.log('countの値は10ではないです。')
+    }
   };
 
   const increment = () => {
@@ -30,6 +35,11 @@ const UseStateVer1 = () => {
     setCount(count + 1);
     // 更新直後の値は変化しない
     console.log(count)
+    if (count === 10) {
+      console.log('countの値は10です')
+    } else {
+      console.log('１')
+    }
   };
 
   return (
