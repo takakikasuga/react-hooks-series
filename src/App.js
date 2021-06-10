@@ -5,8 +5,8 @@ import React, { useState, useMemo } from 'react';
 function App() {
   return (
     <>
-      <UseMemo></UseMemo>
-      {/* <UseMemoVer2></UseMemoVer2> */}
+      {/* <UseMemo></UseMemo> */}
+      <UseMemoVer2></UseMemoVer2>
     </>
   );
 }
