@@ -5,10 +5,10 @@ import React, { useState, useMemo, useCallback } from 'react';
 function App() {
   return (
     <>
-      <Parent></Parent>
+      {/* <Parent></Parent> */}
       {/* <UseMemoParent></UseMemoParent> */}
       {/* <ParentFunc></ParentFunc> */}
-      {/* <ParentFuncCallback></ParentFuncCallback> */}
+      <ParentFuncCallback></ParentFuncCallback>
     </>
   );
 }
