@@ -6,9 +6,9 @@ import axios from 'axios';
 function App() {
   return (
     <>
-      <UseRefDom></UseRefDom>
+      {/* <UseRefDom></UseRefDom> */}
       {/* <UseState></UseState> */}
-      {/* <UseRef></UseRef>  */}
+      <UseRef></UseRef>
     </>
   );
 }
