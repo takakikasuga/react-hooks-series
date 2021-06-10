@@ -19,7 +19,7 @@ const UseMemo = () => {
   // 引数の数値を２倍にして返す。
   // 不要なループを実行しているため計算にかなりの時間がかかる。
   const double = count => {
-    console.log('実行されています。')
+    console.log('double関数が実行されます。')
     let i = 0;
     while (i < 1000000000) i++;
     return count * 2;
@@ -57,7 +57,7 @@ const UseMemoVer2 = () => {
   // 引数の数値を２倍にして返す。
   // 不要なループを実行しているため計算にかなりの時間がかかる。
   const double = count => {
-    console.log('実行されています。')
+    console.log('double関数が実行されます。')
     let i = 0;
     while (i < 1000000000) i++;
     return count * 2;
@@ -67,7 +67,6 @@ const UseMemoVer2 = () => {
   // 第２引数に count2 を渡しているため、count2 が更新された時だけ値が再計算される。
   // count1 が更新され、コンポーネントが再レンダーされた時はメモ化した値を利用するため再計算されない。
   const doubledCount = useMemo(() => {
-    console.log('doubledCount')
     return double(count2)
   }, [count2]);
 
