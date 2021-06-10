@@ -19,8 +19,10 @@ const UseState = () => {
   const decrement = () => {
     // setCount に count - 1 を渡しているので、
     // decrement が実行される度に、count が 1 減る。
-    setCount(count - 1);
     // 更新直後の値は変化しない
+    // setCount(count - 1);
+    // 関数型
+    setCount(pre => pre - 1)
     console.log(count)
     if (count === 10) {
       console.log('countの値は10です')
@@ -32,8 +34,10 @@ const UseState = () => {
   const increment = () => {
     // setCount に count + 1 を渡しているので、
     // increment が実行される度に、count が 1 増える。
-    setCount(count + 1);
     // 更新直後の値は変化しない
+    // setCount(count + 1);
+    // 関数型
+    setCount(pre => pre + 1)
     console.log(count)
     if (count === 10) {
       console.log('countの値は10です')
