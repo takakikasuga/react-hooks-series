@@ -39,6 +39,7 @@ function Timer() {
     // そのため、コンポーネントがアンマウント、もしくは副作用が再度実行された時に clearInterval でタイマーを削除する。
     return () => {
       console.log("cleanup Timer");
+      console.log('componentWillUnmount')
       clearInterval(timerId);
     };
   }, []);
